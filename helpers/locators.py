@@ -27,6 +27,7 @@ class AccordionLocators:
 
 class MainPageLocators:
     ACCORDION_SECTION = (By.CLASS_NAME, 'accordion')
+    ACCORDION_ITEMS_LOCATOR = (By.CLASS_NAME, "accordion__item")
     ACCORDION_HEADING = (By.CLASS_NAME, 'accordion__heading')
     ACCORDION_PANEL = (By.CLASS_NAME, 'accordion__panel')
     TOP_ORDER_BUTTON = (By.CLASS_NAME, 'Button_Button__ra12g')

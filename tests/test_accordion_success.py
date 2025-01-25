@@ -1,15 +1,12 @@
 import pytest
+from pages.base_page import BasePage
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from helpers.locators import AccordionLocators, MainPageLocators
 from helpers.urls import URLs
 from conftest import driver
 import allure
 import time
 
-
-class TestAccordion(AccordionLocators, MainPageLocators):
+class TestAccordion:
     @allure.feature("Вопросы о важном")
     @allure.title("Проверяем секцию «Вопросы о важном»")
     @allure.description(
@@ -49,32 +46,14 @@ class TestAccordion(AccordionLocators, MainPageLocators):
         # question_text = "Сколько это стоит? И как оплатить?"
         # answer_text = "Сутки — 400 рублей. Оплата курьеру — наличными или картой."
         question_xpath = f"//*[contains(text(), '{question_text}')]"
-        answer_xpath = f"{question_xpath}/../..//*[contains(text(), '{answer_text}')]"
-        page = URLs.MAIN_URL
+        answer_xpath = f"{question_xpath}/../..//p"
 
-        with allure.step(f"Открываем страницу: {page}"):
-            driver.get(page)
-
-        with allure.step(f"Ожидание загрузки страницы"):
-            WebDriverWait(driver, 3).until(
-                EC.visibility_of_element_located(self.ACCORDION_SECTION)
-            )
-            WebDriverWait(driver, 3).until(
-                EC.visibility_of_element_located(self.SCOOTER_IMG_LOCATOR)
-            )
-        with allure.step("Поиск элемента на странице"):
-            accordion_item_element = driver.find_element(By.XPATH, question_xpath)
-
-        with allure.step("Скролл до найденного элемента и клик"):
-            driver.execute_script("arguments[0].scrollIntoView();", accordion_item_element)
-            time.sleep(0.5)
-            accordion_item_element.click()
-
-
-        with allure.step("Поиск текста ответа на вопрос"):
-            answer_element = driver.find_element(By.XPATH, answer_xpath)
-            assert answer_element.text == answer_text, f"Текст ответа не совпадает с ожидаемым"
-
-        with allure.step("Проверка видимости текста ответа на вопрос"):
-            driver.execute_script("arguments[0].scrollIntoView();", answer_element)
-            assert answer_element.is_displayed(), "Текст ответа найден на странице, но он не отображается"
+        page = BasePage(driver, URLs.MAIN_URL)
+        question_element = page.find_element((By.XPATH, question_xpath))
+        answer_element = page.find_element((By.XPATH, answer_xpath))
+        page.scroll_to_element(question_element)
+        assert answer_element.is_displayed() == False, "Ответ не должен отображаться до клика по вопросу"
+        question_element.click()
+        time.sleep(0.1)
+        assert answer_element.is_displayed() == True, "Ответ должен отображаться после клика по вопросу"
+        assert answer_element.text == answer_text, "Текст ответа не совпадает с ожидаемым"
