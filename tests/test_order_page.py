@@ -2,12 +2,11 @@ import allure
 import pytest
 
 from pages.order_page import OrderPage
+from helpers.locators import OrderPageLocators
 from conftest import driver
 from helpers.urls import URLs
 import random
-from selenium.webdriver.support.wait import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
-import time
 
 
 class TestOrderPage:
@@ -28,12 +27,6 @@ class TestOrderPage:
 
         with allure.step(f"Открываю страницу {URLs.MAIN_URL}"):
             page = OrderPage(driver)
-
-
-
-        with allure.step("Возврат на страницу заказа"):
-            driver.get(URLs.ORDER_URL)
-            time.sleep(1)
 
         with allure.step(f"Ввожу имя: {name}"):
             page.set_name(name)
@@ -65,7 +58,7 @@ class TestOrderPage:
         with allure.step(f"Нажимаю кнопку подтверждения"):
             page.click_confirm_button()
             page.click_confirm_button()
-            success_form_element = driver.find_element(*OrderPage.SUCCESS_ORDER_INFORMATION_LOCATOR)
+            success_form_element = page.find_element(OrderPageLocators.SUCCESS_ORDER_INFORMATION_LOCATOR)
             assert success_form_element.is_displayed()
 
         with allure.step(f"Получаю номер заказа"):
@@ -80,7 +73,7 @@ class TestOrderPage:
         with allure.step("Проверка перехода на главную страницу dzen"):
             page.click_yandex_logo()
             driver.switch_to.window(window_name=driver.window_handles[1])
-            wait(driver, 3).until(EC.url_contains('dzen'), "Адрес страницы на новой вкладке не содержит 'dzen'")
+            page.wait.until(EC.url_contains('dzen'), "Адрес страницы на новой вкладке не содержит 'dzen'")
             assert "dzen" in driver.current_url, "Адрес страницы на новой вкладке не содержит 'dzen'"
             driver.close()
             driver.switch_to.window(window_name=driver.window_handles[0])

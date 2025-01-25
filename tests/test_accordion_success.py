@@ -6,6 +6,7 @@ from conftest import driver
 import allure
 import time
 
+
 class TestAccordion:
     @allure.feature("Вопросы о важном")
     @allure.title("Проверяем секцию «Вопросы о важном»")

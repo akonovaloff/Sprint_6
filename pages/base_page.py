@@ -2,7 +2,7 @@ import logging
 
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 import time
 
@@ -30,12 +30,12 @@ class BasePage:
         logging.info("Quit driver")
         self.driver.quit()
 
-    def find_element(self, locator: tuple) -> WebElement:
+    def find_element(self, locator: tuple[str, str]) -> WebElement:
         logging.debug("Find Element: %s", locator)
         _element = self.wait.until(ec.presence_of_element_located(locator))
         return _element
 
-    def find_elements(self, locator: tuple) -> WebElement:
+    def find_elements(self, locator: tuple[str, str]) -> list[WebElement]:
         logging.debug("Find Element: %s", locator)
         _elements = self.wait.until(ec.presence_of_all_elements_located(locator))
         return _elements
