@@ -5,19 +5,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 import time
+import allure
 
 class BasePage:
     driver: WebDriver
 
     def __init__(self, driver, url):
+
         self.wait = None
-        self.driver = driver
+        with allure.step(f"Открываю браузер"):
+            self.driver = driver
         self.implicitly_wait_timeout = 15
         self.explicit_wait_timeout = 60
         self.driver.implicitly_wait(self.implicitly_wait_timeout)
         self.set_explicit_wait_timeout(self.explicit_wait_timeout)
         self.driver.maximize_window()
-        self.get_page(url)
+        with allure.step(f"Открываю страницу {url}"):
+            self.get_page(url)
 
     def set_explicit_wait_timeout(self, timeout: int):
         self.wait = WebDriverWait(self.driver, timeout)

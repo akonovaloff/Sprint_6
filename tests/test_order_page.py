@@ -5,9 +5,8 @@ from pages.order_page import OrderPage
 from helpers.locators import OrderPageLocators
 from conftest import driver
 from helpers.urls import URLs
-import random
 from selenium.webdriver.support import expected_conditions as EC
-
+from helpers.generators import random_name, random_surname, random_address, random_phone
 
 class TestOrderPage:
 
@@ -16,46 +15,24 @@ class TestOrderPage:
     @allure.feature("Страница создания заказа")
     @allure.story("Создание заказа")
     def test_order_page(self, driver):
-        NAMES = ["Ахилл", "Одиссей", "Агамемнон", "Гектор", "Парис", "Патрокл", "Приам"]
-        SURNAMES = ["Великий", "Мудрый", "Прекрасный", "Ясноликий", "Первый", "Последний", "Синий"]
-        ADDRESSES = ["Москва", "Санкт-Петербург", "Екатеринбург", "Бобруйск", "деревня Тушино"]
 
-        name = random.choice(NAMES)
-        surname = random.choice(SURNAMES)
-        address = random.choice(ADDRESSES)
-        phone = str(random.randint(10000000000, 99999999999))
+        name = random_name()
+        surname = random_surname()
+        address = random_address()
+        phone = random_phone()
 
-        with allure.step(f"Открываю страницу {URLs.MAIN_URL}"):
-            page = OrderPage(driver)
+        page = OrderPage(driver)
+        page.set_name(name)
+        page.set_surname(surname)
+        page.set_address(address)
+        page.set_phone(phone)
+        page.select_random_metro_station()
+        page.click_confirm_button()
+        page.set_delivery_date()
+        page.set_random_rental_period()
+        page.set_random_color_option()
 
-        with allure.step(f"Ввожу имя: {name}"):
-            page.set_name(name)
-
-        with allure.step(f"Ввожу фамилию: {surname}"):
-            page.set_surname(surname)
-
-        with allure.step(f"Ввожу адрес: {address}"):
-            page.set_address(address)
-
-        with allure.step(f"Ввожу телефон: {phone}"):
-            page.set_phone(phone)
-
-        with allure.step(f"Выбираю станцию метро"):
-            page.select_random_metro_station()
-
-        with allure.step(f"Нажимаю кнопку подтверждения"):
-            page.click_confirm_button()
-
-        with allure.step(f"Выбираю дату доставки"):
-            page.set_delivery_date()
-
-        with allure.step(f"Выбираю срок аренды"):
-            page.set_random_rental_period()
-
-        with allure.step(f"Выбираю цвет"):
-            page.set_random_color_option()
-
-        with allure.step(f"Нажимаю кнопку подтверждения"):
+        with allure.step(f"Подтверждаю создание заказа"):
             page.click_confirm_button()
             page.click_confirm_button()
             success_form_element = page.find_element(OrderPageLocators.SUCCESS_ORDER_INFORMATION_LOCATOR)
